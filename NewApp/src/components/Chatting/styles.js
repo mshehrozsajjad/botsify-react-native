@@ -33,7 +33,7 @@ Container: {
   },
   BotsifyHeaderText: {
     alignSelf: "center",
-    marginTop: 5,
+    marginTop: 10,
     marginBottom: 10,
     fontSize: 20,
     color: "white",

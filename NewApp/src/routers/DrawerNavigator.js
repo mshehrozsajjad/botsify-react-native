@@ -6,19 +6,22 @@ import Modal from "../containers/ModalContainer";
 import BotDetail from "../containers/BotDetailContainer";
 import MyChat from "../containers/MyChatContainer";
 import Chat from "../containers/ChatContainer";
+import chatting from "../containers/chattingContainer"
+import Login from "../containers/LoginContainer";
 
 export default createDrawerNavigator(
   {
     Home: { screen: Home },
     Modal: { screen: Modal },
-    BotDetail: { screen: BotDetail },
-    MyChat: { screen: MyChat },
+    chatting: {screen: chatting},
     Chat: {screen: Chat},
+    Login: {screen: Login}
+    
   },
   {
-    initialRouteName: "Home",
-      drawerPosition:'right',
-      drawerType:'slide',
+    initialRouteName: "Login",
+      drawerPosition:"right",
+      drawerType:"slide",
     contentComponent: props => <SideBar {...props} />
   }
 );

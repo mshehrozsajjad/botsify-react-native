@@ -35,7 +35,7 @@ export default {
 
   BotsifyHeaderText: {
     alignSelf: "center",
-    marginTop: 5,
+    marginTop: 10,
     marginBottom: 10,
     fontSize: 27,
     color: "white",

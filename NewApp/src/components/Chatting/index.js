@@ -1,8 +1,10 @@
 import React, { Component } from "react";
-import { BackHandler, Header, Left, Container, Button, Body, Title, Right, Icon, Text, Content, Alert} from "native-base";
-import { StatusBar , View, Image, ActivityIndicator} from "react-native";
+import {  Header, Left, Container, Button, Body, Title, Right, Icon, Text, Content, Alert} from "native-base";
+import { StatusBar , View, Image, ActivityIndicator, BackHandler, AsyncStorage} from "react-native";
 import styles from "./styles";
-import { GiftedChat } from "react-native-gifted-chat"
+import { GiftedChat , Bubble} from "react-native-gifted-chat";
+
+
 console.disableYellowBox = true
 
 const avatar = require("../../../assets/avatar2.png");
@@ -50,8 +52,36 @@ export default class Chatting extends Component {
     console.log(id)
     }
 
+    _storeData = async (id, data) => {
+      try {
+        await AsyncStorage.setItem('@MySuperStore:key', 'I like to save it.');
+      } catch (error) {
+        // Error saving data
+      }
+    };
+
+    renderBubble (props) {
+      return (
+        <Bubble
+          {...props}
+          wrapperStyle={{
+            right: {
+              backgroundColor: "#7CD1E9"
+            }
+          }}
+        />
+      )
+    }
+  
+
   componentDidMount() 
   {
+    this.backButton = BackHandler.addEventListener("hardwareBackPress", () =>{ 
+      
+      this.props.navigation.navigate("Chat", { bot_id: bot_id, access_token: access_token})
+      return true;
+
+      });
 
     let formData = new FormData();
 
@@ -129,7 +159,6 @@ export default class Chatting extends Component {
                     }),
                   }));
                 }
-
               }             
              
               else {
@@ -149,19 +178,23 @@ export default class Chatting extends Component {
           }
           }
         }
+       
            })
-      
+    
     .catch(error => {
       console.log(error);});
+ 
   }
 
+  componentWillUnmount(){
+    this.backButton.remove();
+    }
+  
   onSend(messages = []) {
 
-    console.log("IN SEND MESSAGE METHOD")
-    console.log(messages[0].text)
+    console.log("IN SEND MESSAGE METHOD");
+    console.log(messages[0].text);
     
-
-
     let formData = new FormData();
 
     formData.append("bot_id", bot_id);
@@ -197,7 +230,7 @@ export default class Chatting extends Component {
   render() {
 
 
-    if (this.state.isLoading)
+    if (this.state.isLoading ) 
       {
         return ( 
           <View style={styles.loading}>
@@ -215,7 +248,7 @@ export default class Chatting extends Component {
           androidStatusBarColor={"#7CD1E9"}
           style={{ borderBottomWidth: 0 ,  alignSelf: "stretch", paddingLeft: 0, paddingRight: 0, borderColor: "#7CD1E9"}}>
           <Left style={[styles.headerLeft, {padding: 0}]}>
-            <Button transparent >
+            <Button transparent onPress={() => this.props.navigation.openDrawer()} >
               <Icon name="menu" style={{ color: "#000",}}/>
             </Button>
           </Left>
@@ -227,6 +260,7 @@ export default class Chatting extends Component {
         <View  style={{flex:1, backgroundColor: "#7CD1E9", borderColor: "#7CD1E9", alignSelf: "stretch"}}>
             <View style={styles.BotsifyHeaderRadius}>
               <GiftedChat
+                     renderBubble={this.renderBubble}
                     messages={this.state.messages}
                     onSend={messages => this.onSend(messages)}
                     user={{
@@ -239,10 +273,6 @@ export default class Chatting extends Component {
     )
   }
 }
-
-
-
-
 {/*
 
    this.setState({

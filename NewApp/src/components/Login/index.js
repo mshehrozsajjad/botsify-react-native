@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { Image, StatusBar } from "react-native";
 import { Container, Content, Button, Text, View } from "native-base";
-import Spinner from "react-native-loading-spinner-overlay";
+//import Spinner from "react-native-loading-spinner-overlay";
 import styles from "./styles";
 
 const logo = require("../../../assets/logo.png");

@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
-import { Image, Alert } from "react-native";
+import { Image, Alert, AsyncStorage} from "react-native";
 import { Item, Input, Toast, Form } from "native-base";
 import { Field, reduxForm } from "redux-form";
 import { connect } from "react-redux";
@@ -11,17 +11,73 @@ import styles from  "./styles";
 
 const lockIcon = require("../../../assets/icon/lock.png");
 const mailIcon = require("../../../assets/icon/mail.png");
+var email= "";
+var password = "";
+var client_id = ""
+var client_secret = ""
+var auth = ""
+var auth2 = ""
+var auth3 = ""
+var auth4 = ""
+var stage = 1;
 
 class LoginForm extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      counter: 0,
-      isLoading: false,
-      dataSource: [],
-      in: "stage0"
-    };
+
+    
+  this.state = {
+    counter: 0,
+    isLoading: false,
+    dataSource: [],
+    in: "stage0"
+  };
+  
   }
+componentWillMount()
+{
+  auth = this.retrieveData("email");
+
+    auth.then(function(value){
+      console.log("inside auth")
+      stage = 2;
+      email = value;
+      console.log(email)
+    })
+
+  auth2 = this.retrieveData("password");
+
+      auth2.then(function(value){
+        console.log("inside auth 2")
+        password = value;
+        stage = 3;
+        console.log(password)
+      })
+
+
+ /*  auth3 = this.retrieveData("client_id");
+   auth3.then(function(value){
+     if (value)
+     {
+      console.log("inside auth 3")
+      client_id = value;
+      console.log(client_id)
+     }
+    })
+
+    auth4 = this.retrieveData("client_secret");
+    auth4.then(function(value){
+      if (value ){
+      console.log("inside auth 4")
+        client_secret = value;
+        console.log(client_secret)
+        //this.props.navigation.navigate("Home", { client_id : client_id, 
+        //client_secret: client_secret, email: email, password: password});
+      })
+    }*/
+  
+}
+
 
   componentWillReceiveProps(nextProps, nextState){
     if (this.props.auth.isFailed !== nextProps.auth.isFailed){
@@ -38,7 +94,36 @@ class LoginForm extends Component {
         this.props.navigation.navigate("App");
       }
     }
+
+    
   }
+ 
+
+  storeData = async (key, item) => {
+    try {
+      await AsyncStorage.setItem(key, item);
+    } catch (error) {
+     
+    }
+  };
+
+  retrieveData = async (key) => {
+    try {
+      console.log("retrieving data");
+      const value = await AsyncStorage.getItem(key);
+      if (value !== null) {
+        
+        return value;
+      }
+
+      else {
+        console.log("value not found")
+        return "null";
+      }
+    } catch (error) {
+
+    }
+  };
 
 
   fetchLogin = async()=>{ 
@@ -67,6 +152,9 @@ class LoginForm extends Component {
       in: "stage1",
       counter: 0,
     });
+    this.storeData("client_id", responseJson.client_id);
+    this.storeData("client_secret", responseJson.client_secret)
+    this.login();
     
   }).catch(error => {
     console.log(error);});
@@ -92,24 +180,25 @@ class LoginForm extends Component {
 
   login() {
 
-      this.fetchLogin();
-
-      if (this.state.in === "stage0")
-      {
-
-      }
+      if (this.state.in === "stage1") {
 
     if (this.props.valid) {
       let { email, password } = this.props.loginForm.values;
       console.log("check credentials")
-      console.log(email, password)
+      console.log(this.state.dataSource.status)
+
       if (email === this.state.dataSource.status){
+        this.storeData("email", email);
+        this.storeData("password", password);
         this.props.loginSuccess({email, password});
-        this.props.navigation.navigate("Home")
+        this.props.navigation.navigate("Home", { client_id : this.state.dataSource.client_id, 
+          client_secret: this.state.dataSource.client_secret, email: email, password: password})
       } else {
         this.props.loginFail({email, password});
       }
-    } else {
+    }
+    
+    else {
       Toast.show({
         text: "Enter Valid Username & password!",
         duration: 2000,
@@ -117,6 +206,8 @@ class LoginForm extends Component {
         textStyle: { textAlign: "center" }
       });
     }
+
+  }
   }
 
   onPressSwitch(){
@@ -131,6 +222,10 @@ class LoginForm extends Component {
   }
 
   render() {
+    console.log(email)
+    console.log(password)
+    console.log(client_id)
+    console.log(client_secret)
     const form = (
       <Form>
         <Field
@@ -151,7 +246,7 @@ class LoginForm extends Component {
         navigation={this.props.navigation}
         loading={this.props.auth.isAuthenticating}
         loginForm={form}
-        onLogin={() => this.login()}
+        onLogin={() => this.fetchLogin()}
       />
     );
   }

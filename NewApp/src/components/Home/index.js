@@ -7,11 +7,17 @@ const avatar = require("../../../assets/avatar1.png");
 var count = 0;
 var access_token = ""
 var data = ""
+var client_id = ""
+var client_secret = ""
+var email = ""
+var password = ""
 
 class BotViewLeft extends Component {
   constructor(props)
   {
     super(props);
+
+    
     
   }
   render() {
@@ -49,6 +55,12 @@ export default class Home extends Component {
   constructor(props)
   {
     super(props);
+    client_id = props.navigation.state.params.client_id;
+    client_secret =  props.navigation.state.params.client_secret;
+    email = props.navigation.state.params.email;
+    password =  props.navigation.state.params.password;
+
+ 
     this.state = {
       isLoading: true,
       isLoading1: true,
@@ -58,7 +70,7 @@ export default class Home extends Component {
     };
   }
   
-  componentWillMount()
+  componentDidMount()
   {
       this.fetchToken();
 
@@ -67,12 +79,13 @@ export default class Home extends Component {
 
   fetchToken = async () => {
 
+
     let formData = new FormData();
   formData.append("grant_type", "password");
-  formData.append("client_id", 19);
-  formData.append("client_secret", "S6IlYpLGaI4q0fCv8u32q96cpuTAGwGm5bhJNyZm");
-  formData.append("username", "saad.rawasia15@live.com");
-  formData.append("password", "test1234");
+  formData.append("client_id", client_id);
+  formData.append("client_secret", client_secret);
+  formData.append("username", email);
+  formData.append("password", password);
   formData.append("scope", "");
 
   await fetch("https://dev.botsify.com/oauth/token", {

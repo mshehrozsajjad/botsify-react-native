@@ -1,7 +1,9 @@
 import React, { Component } from "react";
 import { Header, Left, Container, Button, Body, Title, Right, Icon, Text, Content, Alert} from "native-base";
-import { StatusBar , View, Image, SectionList, StyleSheet, FlatList, TouchableOpacity, TouchableHighlight, ActivityIndicator, Dimensions} from "react-native";
+import { StatusBar , View, Image, BackHandler, TouchableOpacity, TouchableHighlight, ActivityIndicator, Dimensions} from "react-native";
 import styles from "./styles";
+import Moment from "moment";
+
 
 const avatar = require("../../../assets/avatar2.png");
 const screenWidth = Math.round(Dimensions.get("window").width);
@@ -10,26 +12,39 @@ var access_token = "";
 var bot_id = "";
 var data = []
 var users = [];
+var dt =""
 
 class ChatBox extends Component {
   render () {    
+    
+    Moment.locale("en");
+    dt = Moment(this.props.lastTime).format("M/d/Y")
+   
+    if (dt === "Invalid date")
+    {
+        dt = ""
+      }
+    
     return (
 
-      <View><TouchableHighlight onPress={() => this.props.navigation.navigate("chatting",
-      { bot_id: bot_id, fbId: this.props.fbId, access_token: access_token, name: this.props.name, id : this.props.id})}>
-      <View style={[styles.chatStrip, {marginLeft: screenWidth * 0.05 , marginRight: screenWidth * 0.05}]}>
-      <Image source={avatar} style = {styles.chatImage}/>
       <View>
-        <View style={{flexDirection: "row"}}>
-      <Text style= {[styles.usernameChat, {width : screenWidth * 0.5}]}>{this.props.name}</Text>
-      <Text style={styles.timeText }> 11:57am</Text>
-      </View>
-      </View>
-
+        <TouchableHighlight onPress={() => this.props.navigation.navigate("chatting",
+          { bot_id: bot_id, fbId: this.props.fbId, access_token: access_token, name: this.props.name, id : this.props.id})}>
+          <View style={[styles.chatStrip, {marginLeft: screenWidth * 0.05 , marginRight: screenWidth * 0.05}]}>
+            <Image source={avatar} style = {styles.chatImage}/>
+              <View>
+                <View style={{flexDirection: "row", flex:1 }}>
+                  <Text style= {[styles.usernameChat, {width : screenWidth * 0.5}]}>{this.props.name}</Text>
+                  <Text style={styles.timeText}>{dt}</Text>
+                </View>
+                <View style={{flexDirection: "row", flex: 1}}>
+                  <Text style= {styles.chatText}>{this.props.lastMSG}</Text>
+                </View>
+              </View>
+            </View>
+      </TouchableHighlight>
     </View>
-    </TouchableHighlight>
-    </View>
-    )
+    );
 }
 }
 
@@ -51,6 +66,12 @@ export default class Chat extends Component {
 
   componentDidMount()
   {
+    this.backButton = BackHandler.addEventListener("hardwareBackPress", () =>{ 
+      
+      this.props.navigation.navigate("Home")
+      return true;
+
+      });
 
     let formData = new FormData();
 
@@ -67,6 +88,8 @@ export default class Chat extends Component {
     
       .then((response) => response.json() )
       .then((responseJson) => {
+        console.log("RESPONSE JSON PRINTED")
+        console.log(responseJson)
         this.setState({
           
           dataSource: responseJson.messengerUsers,
@@ -74,10 +97,13 @@ export default class Chat extends Component {
           data = this.state.dataSource;
           console.log("data")
           console.log(data);
+          console.log(new Date())
           users = [];
+
           for (var i = 0; i < data.length; i++)
             {
-              users.push(<ChatBox name = {data[i].name} navigation = {this.props.navigation} fbId = {data[i].fbId} id = {data[i].id}/>)
+              users.push(<ChatBox name = {data[i].name} navigation = {this.props.navigation} lastMSG = {data[i].last_user_msg} 
+                lastTime = {data[i].last_converse} fbId = {data[i].fbId} id = {data[i].id} />)
             }
 
             this.setState({
@@ -85,6 +111,8 @@ export default class Chat extends Component {
               isLoading: false,
             })
 
+            
+ 
             
     
     }).catch(error => {
@@ -112,7 +140,7 @@ export default class Chat extends Component {
           androidStatusBarColor={"#7CD1E9"}
           style={{ borderBottomWidth: 0 ,  alignSelf: "stretch", paddingLeft: 0, paddingRight: 0, borderColor: "#7CD1E9"}}>
           <Left style={[styles.headerLeft, {padding: 0}]}>
-            <Button transparent >
+            <Button transparent onPress={() => this.props.navigation.openDrawer()}>
               <Icon name="menu" style={{ color: "#000",}}/>
             </Button>
           </Left>
@@ -134,24 +162,24 @@ export default class Chat extends Component {
               <View style={styles.activeUsers}>
               <Text style={styles.activeUsersText}>Active Users</Text>
               <View style={{}}>
-                <View style={{flexDirection: "row", paddingLeft: 15, paddingRight:15}}>
-                  <View style={{flex:1, marginBottom: 15, alignContent: "center"}} >
+                <View style={{flexDirection: "row", paddingLeft: 15, paddingRight:15, paddingBottom: 15}}>
+                  <View style={styles.activeUsersBox} >
                     <Image source={avatar} style = {styles.userImage}/>
                     <Text style={styles.usernameText}> Jon</Text>
                   </View>
-                  <View style={{flex:1, marginBottom: 15}} >
+                  <View style={styles.activeUsersBox} >
                     <Image source={avatar} style = {styles.userImage}/>
                     <Text style={styles.usernameText}> Steven</Text>
                   </View>
-                  <View style={{flex:1, marginBottom: 15}} >
+                  <View style={styles.activeUsersBox} >
                     <Image source={avatar} style = {styles.userImage}/>
                     <Text style={styles.usernameText}> Roger</Text>
                   </View>
-                  <View style={{flex:1, marginBottom: 15}} >
+                  <View style={styles.activeUsersBox} >
                     <Image source={avatar} style = {styles.userImage}/>
                     <Text style={styles.usernameText}> Mark</Text>
                   </View>
-                  <View style={{flex:1, marginBottom: 15}} >
+                  <View style={styles.activeUsersBox} >
                     <Image source={avatar} style = {styles.userImage}/>
                     <Text style={styles.usernameText}> Stanley</Text>
                   </View>

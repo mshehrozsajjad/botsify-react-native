@@ -1,5 +1,3 @@
-import { Row } from "native-base";
-
 export default {
   loading: {
     position: "absolute",
@@ -34,7 +32,7 @@ export default {
     },
     BotsifyHeaderText: {
       alignSelf: "center",
-      marginTop: 5,
+      marginTop: 10,
       marginBottom: 10,
       fontSize: 27,
       color: "white",
@@ -77,6 +75,14 @@ export default {
         alignSelf: "stretch",
       },
 
+      activeUsersBox: 
+      {
+        flex:1,
+        alignContent: "center",
+        alignItems: "center",
+
+      },
+
       activeUsersText:
       {
         color: "#626f78",
@@ -88,9 +94,9 @@ export default {
       },
 
       userImage: {
-      margin: 13,
       height: 55,
       width: 55,
+      justifyContent: "flex-start",
       borderColor: "#7CD1E9",
       borderWidth: 2,
       marginBottom: 0,
@@ -98,7 +104,7 @@ export default {
       },
 
       usernameText:{
-        alignSelf: "center",
+       
         margin: 0,
         padding: 0,
         textAlign: "center",
@@ -122,7 +128,7 @@ export default {
         borderRadius: 4,
         flexDirection: "row",
         shadowColor: "#000",
-        shadowOffset: { width: 2, height: 2 },
+        shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.8,
         shadowRadius: 2,
         elevation: 3,    },
@@ -161,7 +167,7 @@ export default {
         color: "black",
         fontSize: 15,
         marginLeft: 5,
-        marginTop: 10,
+        marginTop: 15,
         fontWeight: "bold",
         flexDirection: "column",
         
@@ -169,10 +175,10 @@ export default {
 
       chatText:{
         color: "black",
-        fontSize: 15,
+        fontSize: 13.5,
         marginLeft: 5,
-        marginTop: 10,
-        marginBottom: 5,
+        marginTop: 5,
+        marginBottom: 15,
         flexDirection: "row",
       },
 
@@ -183,7 +189,6 @@ export default {
         alignSelf: "stretch",
         marginRight: 0,
         marginTop: 15,
-        marginBottom: 5,
         flexDirection: "column",
       },
 
