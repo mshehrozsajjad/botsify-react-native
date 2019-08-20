@@ -17,11 +17,16 @@ export default {
         width: 100,
         alignItems: 'center'
     },
+        loaderrow:{
+            flexDirection: 'row',
+            paddingHorizontal: 25,
+        },
     row: {
         flexDirection: 'row',
-        paddingHorizontal: 20,
+        paddingHorizontal: 15,
         marginTop: 10,
         marginBottom: 10,
+        justifyContent: 'space-between',
     },
     scrollcontainer: {
         flex: 1,
@@ -39,13 +44,23 @@ export default {
     item: {
         flex: 1,
         height: 120,
+        flexDirection: 'column',
         width: 120,
         backgroundColor: '#ffffff',
         borderColor: '#7CD1E9',
         borderWidth: 2,
         borderRadius: 6,
-        alignItems: 'center',
-        justifyContent: 'space-around',
+        marginTop: 5,
+        marginBottom: 5,
+        marginLeft: 5,
+        marginRight: 5,
+        borderRadius: 8,
+        backgroundColor: '#FFFFFF',
+        elevation: 3,
+        alignItems: "center",
+        justifyContent: "center",
+        alignSelf: "center",
+       
     },
 
     CurveHeaderText: {
@@ -56,7 +71,10 @@ export default {
         color: "white",
         fontWeight: "bold",
     },
-
+backbutton:{
+    width:15,  
+    height:15  
+},
     CurveHeader: {
         flex: 1,
         backgroundColor: "#7CD1E9",
@@ -86,19 +104,39 @@ export default {
     },
 
     itemText: {
-        fontSize: 18,
-
+        
+        marginHorizontal:5,
+        fontSize: 14,
+        flex:1,
+         marginTop:10, 
+        alignSelf:'center',
         color: 'rgb(19,19,19)',
         fontFamily: 'Lato-Regular',
-    },
+         alignItems: "center",
+        justifyContent: "center",
+        alignSelf: "center",
+        },loaderitem: {
+            flex:1,
+             marginTop:10,
+
+            justifyContent: "space-between",
+        },
     headerimagestyle: {
 
     },
     itemImage: {
-        height: 60,
-        width: 60,
-        borderRadius: 60 / 2,
-        overflow: 'hidden'
+
+        marginTop:10, 
+      alignItems: "center",
+        justifyContent: "center",
+        alignSelf: "center",
+        height:100,
+        flex:1,
+        width: 100,
+
+       
+       
+
     },
     headerRight: {
         flex: 0.3

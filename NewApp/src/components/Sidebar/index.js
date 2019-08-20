@@ -4,16 +4,17 @@ import { Content, Text, List, ListItem, Container, View, Icon } from "native-bas
 import _ from "lodash";
 import styles from "./styles";
 
-const avatarImage = require("../../../assets/avatar.png");
+const avatarImage = require("../../../assets/default-avatar.png");
 
 class SideBar extends Component {
   render() {
+      const hellotest = this.props.hello;
     let logoutMenu = _.find(this.props.data, { route: "Logout" });
     return (
       <Container style={styles.container}>
         <View style={styles.drawerCover}>
           <Image source={avatarImage} style={styles.avatar}/>
-          <Text style={styles.organizerName}>Demo Account</Text>
+          <Text style={styles.organizerName}>{hellotest}</Text>
         </View>
         <Content bounces={false}>
           

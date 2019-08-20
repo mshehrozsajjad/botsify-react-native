@@ -16,7 +16,10 @@ export default {
       fontFamily: 'Lato-Regular',
       fontWeight:'bold',
       fontSize:22
-  },
+  },backbutton:{
+    width:15,  
+    height:15  
+},
           CurveHeaderText: {
     alignSelf: "center",
     marginTop: 10,

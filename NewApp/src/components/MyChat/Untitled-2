@@ -1,0 +1,204 @@
+import React, { Component } from "react";
+import {  Header, Left, Container, Button, Body, Title, Right, Icon, Text, Content } from "native-base";
+import { View,StatusBar,TouchableOpacity,Image,ScrollView,TextInput ,AsyncStorage} from "react-native";
+import styles from "./styles";
+import { GiftedChat } from 'react-native-gifted-chat'
+import { LoginButton,AccessToken, LoginManager } from "react-native-fbsdk"
+const backbutton = require('../../../assets/left-arrow.png');
+const Avatar = require('../../../assets/support.png');
+import * as firebase from 'firebase';
+export default class MyChat extends Component {
+        constructor(props) {
+        super(props);
+        this.state = {
+          counter: 0,
+              client_id: 0,
+          client_secret: 0,
+          username: 0,
+          password: 0,
+            useridentity:'',
+            isLoadingChat:true,
+ access_token:null,
+          allmessages: [{_id:Math.round(Math.random()*100000), text:'Hi There', createdAt: new Date(),user: {_id: 2,name: 'Bot',
+                            avatar: Avatar}}],
+        };
+       this.handleBackButtonClick = this.handleBackButtonClick.bind(this);
+}
+   handleBackButtonClick() {
+   this.props.navigation.goBack();
+
+}
+    _handleTextChange(messagesarray){
+        console.log(messagesarray)
+        this.setState(previousState => ({
+                      allmessages: GiftedChat.append(previousState.allmessages, messagesarray),
+                    })) 
+        
+    }
+ componentWillMount() {
+     _hello = this;
+        console.log('did mount')
+       console.log(this.props.navigation.getParam('bot_key'));
+       console.log(this.props.navigation.getParam('user_id'));
+       console.log(this.props.navigation.getParam('fbId'));
+
+        
+         var userStatusDatabaseRef = firebase.database().ref("/users/"+this.props.navigation.getParam('bot_key')+"/"+this.props.navigation.getParam('user_id'));
+        userStatusDatabaseRef.on("child_changed", function(snapshot){
+          //output.innerHTML = JSON.stringify(snapshot.val(), null, 2);
+        var data = snapshot.val();
+        if (data.online == true) {
+            console.log('online')
+        }else{
+            console.log('offline')
+        }
+
+      });
+     console.log(userStatusDatabaseRef)
+         userStatusDatabaseRef.on("value", function(snapshot){
+       data = snapshot.val();
+          if(data !== null){
+          self.data_length = Object.keys(data).length;
+        }else{
+          self.data_length = 1;
+          var firebase_keys_length = 1;
+        }
+      });
+         var firebase_interval = setInterval(function(){
+        if(self.data_length > 0){
+          userStatusDatabaseRef.on("child_added", function(snapshot){
+            data = snapshot.val();
+            if(data.message){
+                let messagesarray = [];
+                  console.log(data.message.messages.length)
+                  
+console.log(data.message.messages[0])
+                      if(data.message.messages[0].direction === 'from'){
+                          var received = {_id:Math.round(Math.random()*100000), text:data.message.messages[0].message.text, createdAt: data.message.messages[0].created_at,user: {_id: 2,name: 'Bot',
+                            avatar: Avatar}};
+                          messagesarray.push(received);
+                          
+                      }else if(data.message.messages[0].direction === 'to'){
+                          var sendmessage = {_id:Math.round(Math.random()*100000), text:data.message.messages[0].message.text, createdAt: data.message.messages[0].created_at,user: {_id: 1}};
+                          messagesarray.push(sendmessage);
+                        
+                      }
+                     _hello.setState(previousState => ({
+                      allmessages: GiftedChat.append(previousState.allmessages, messagesarray),
+                    })) 
+                 
+               
+               
+                  
+              }
+             
+          });
+          clearInterval(firebase_interval);
+        }
+
+      },10);  
+      AsyncStorage.getItem('auth_data').then((value) => {
+             if(value != null){
+           var value = JSON.parse(value)
+           this.setState({
+               client_id:value.client_id,
+               client_secret:value.client_secret,
+               username:value.username,
+               password:value.password,
+           })
+          }else{
+                AsyncStorage.removeItem('acess_token');
+                AsyncStorage.removeItem('auth_data');
+                this.props.navigation.navigate("Login")
+          }
+       });
+
+     AsyncStorage.getItem('acess_token').then((value) => {
+             if(value != null){
+           var value = JSON.parse(value)
+           this.setState({
+               access_token:value,
+               
+           })
+          }else{
+                AsyncStorage.removeItem('acess_token');
+                AsyncStorage.removeItem('auth_data');
+                this.props.navigation.navigate("Login")
+          }
+       });
+}
+    
+       onSend(messages = []) {
+        
+         var fbId = this.props.navigation.getParam('fbId')
+            var bot_id = this.props.navigation.getParam('bot_id')
+            console.log(fbId)
+            console.log(bot_id)
+              var form = new FormData();
+            form.append("bot_id", bot_id);
+            form.append("fbId", fbId);
+            form.append("message", messages[0].text);
+        console.log(form)
+         var url = 'https://dev.botsify.com/api/v1/send-message'
+       fetch(url, {
+        method: 'POST',
+        headers: {
+            'Accept': 'application/json',
+            'Authorization':'Bearer '+ this.state.access_token,
+        },
+        body: form,
+    })
+    .then(response => response.json())
+           .then(response => { 
+           console.log('done')
+           console.log(response)
+ })
+        .catch(error => console.error('Error:', error));
+
+        console.log(messages)    
+  }
+
+  render() {
+    return (
+      <Container style={styles.container}>
+        <StatusBar translucent={false}/>
+            <Header
+              noShadow
+              iosBarStyle={"dark-content"}
+              androidStatusBarColor={"#fff"}
+               style={{ borderBottomWidth: 0,backgroundColor:'#7CD1E9' }}>
+                <Left style={styles.headerLeft}>
+            <Button transparent onPress={() => this.handleBackButtonClick()}>
+              <Image
+                            resizeMode="contain"
+                            source={backbutton}
+                            style={styles.backbutton}
+                            />
+            </Button>
+          </Left>
+                <Body style={styles.headerBody}>
+                    <Title style={styles.textBody}>hello</Title>
+                  </Body>
+                  <Right style={styles.headerRight}>
+                        <Button transparent onPress={() => this.props.navigation.openDrawer()}>
+                          <Icon name="menu" style={{ color: "#000" }}/>
+                        </Button>
+                </Right>
+            </Header>
+            <View style={styles.BotsSection}>
+                <View  style={{flex:1, backgroundColor: "#7CD1E9"}}>
+                    <View style={styles.CurveHeaderRadius}>        
+                    </View>
+                </View>
+            </View>
+            <GiftedChat
+            messages={this.state.allmessages}
+            onSend={messages => this.onSend(messages)}
+            user={{
+              _id: 1,
+            }}
+          />
+      </Container>
+    );
+  }
+}

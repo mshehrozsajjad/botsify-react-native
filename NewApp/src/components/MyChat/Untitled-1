@@ -1,0 +1,63 @@
+ <View style={{backgroundColor:'#F5F5F5',paddingVertical: 15}}>
+                            <View style={{marginLeft:10,flex:1,paddingVertical: 5}}>
+                                <Text style={styles.minHeading}>
+                                    Active Users
+                                </Text>
+                            </View>
+                            {this.state.isLoadingActiveUser
+                            ?
+                            <View style={{paddingVertical:15,paddingHorizontal:15}}>
+                                 <View style={styles.loaderrow}>
+                                    <View style={styles.loaderitem}>
+                                        <ContentLoader height={80} width={80}>
+                                            <Circle cx="40" cy="40" r="40"/>   
+                                        </ContentLoader>
+                                        <View style={{marginLeft:10,marginTop:10}}>
+                                             <ContentLoader height={10}>
+                                                <Rect x="0" y="0" rx="5" ry="5" width="60" height="8" />    
+                                            </ContentLoader>
+                                         </View>
+                                    </View>  
+                                    <View style={styles.loaderitem}>
+                                        <ContentLoader height={80} width={80}>
+                                            <Circle cx="40" cy="40" r="40"/>   
+                                        </ContentLoader>
+                                        <View style={{marginLeft:10,marginTop:10}}>
+                                             <ContentLoader height={10}>
+                                                <Rect x="0" y="0" rx="5" ry="5" width="60" height="8" />    
+                                            </ContentLoader>
+                                         </View>
+                                    </View> 
+                                    <View style={styles.loaderitem}>
+                                        <ContentLoader height={80} width={80}>
+                                            <Circle cx="40" cy="40" r="40"/>   
+                                        </ContentLoader>
+                                        <View style={{marginLeft:10,marginTop:10}}>
+                                             <ContentLoader height={10}>
+                                                <Rect x="0" y="0" rx="5" ry="5" width="60" height="8" />    
+                                            </ContentLoader>
+                                         </View>
+                                    </View>
+                                    <View style={styles.loaderitem}>
+                                        <ContentLoader height={80} width={80}>
+                                            <Circle cx="40" cy="40" r="40"/>   
+                                        </ContentLoader>
+                                        <View style={{marginLeft:10,marginTop:10}}>
+                                             <ContentLoader height={10}>
+                                                <Rect x="0" y="0" rx="5" ry="5" width="60" height="8" />    
+                                            </ContentLoader>
+                                         </View>
+                                    </View> 
+                                </View>                
+                            </View>
+                        :
+                        <View style={{paddingVertical:15,paddingHorizontal:15}}>
+                             <ScrollView
+                                    horizontal={true}
+                                    showsHorizontalScrollIndicator={false}
+                                    >
+                                    {this.state.allusers}
+                            </ScrollView>
+                        </View>
+                        }   
+                        </View>

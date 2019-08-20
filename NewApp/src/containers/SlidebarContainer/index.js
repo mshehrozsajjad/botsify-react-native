@@ -2,10 +2,13 @@ import React, { Component } from "react";
 import Sidebar from "../../components/Sidebar";
 import { connect } from "react-redux";
 import { userRequestLogout } from "../../actions";
-
+import  {AsyncStorage }from "react-native";
 class SidebarContainer extends Component {
   constructor(props) {
     super(props);
+      this.state = {
+        name:''  
+      };
     this.data = [
       {
         name: "Home",
@@ -29,7 +32,24 @@ class SidebarContainer extends Component {
       }
     ];
   }
-
+    componentDidMount(){
+       AsyncStorage.setItem('user_name_active_chat','demo account');
+        this.fiveSecTimer();
+    }
+ fiveSecTimer(){
+        setTimeout(function () {
+            console.log('fetch name');
+            AsyncStorage.getItem('user_name_active_chat').then((value) => {
+            this.setState({
+                name:value
+            })
+                console.log(value)
+          
+       });
+          console.log( )
+            this.fiveSecTimer();
+        }.bind(this), 200)
+    }
   navigator(data) {
     if (data.route === "Logout") {
       this.props.logout();
@@ -43,6 +63,7 @@ class SidebarContainer extends Component {
     return (
       <Sidebar
         data={this.data}
+        hello={this.state.name}
         onPress={(data) => this.navigator(data)}/>
     );
   }

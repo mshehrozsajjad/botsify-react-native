@@ -7,16 +7,19 @@ export default {
         flex: 0.3
     },
     headerBody: {
-        flex: 1,
+        flex: 0.8,
         flexDirection: 'row',
         justifyContent: 'center'
     },
     textBody: {
         flex: 1,
         height: 35,
-        width: 100,
+        width: 90,
         alignItems: 'center'
-    },
+    },backbutton:{
+    width:15,  
+    height:15  
+},
     row: {
         flexDirection: 'row',
         paddingHorizontal: 20,
@@ -60,8 +63,9 @@ export default {
         padding: 15,
     },
     rightCol: {
+     
         width: 75,
-        justifyContent: 'space-between',
+       
         alignItems: 'flex-end',
     },
     ranking: {
@@ -127,7 +131,15 @@ export default {
         marginRight: 5,
         borderRadius: 8,
         backgroundColor: '#FFFFFF',
-        elevation: 6,
+        elevation: 3,
+    },
+    loaderrow:{
+        flexDirection: 'row',
+    
+    },
+loaderitem: {
+   flex:0.28,
+
     },
     itemThreeSubContainer: {
         flexDirection: 'row',

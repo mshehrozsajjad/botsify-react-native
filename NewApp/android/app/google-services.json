@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "27153549186",
+    "firebase_url": "https://botsifyapp.firebaseio.com",
+    "project_id": "botsifyapp",
+    "storage_bucket": "botsifyapp.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:27153549186:android:63e896dbc0cb74ce",
+        "android_client_info": {
+          "package_name": "com.botsify.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "27153549186-hlobdcv0kf5ri1jo48n33vsc8uapquqt.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA8kIQgl1Pw8tEJXX2PikexUI0vOEqUxUs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "27153549186-hlobdcv0kf5ri1jo48n33vsc8uapquqt.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

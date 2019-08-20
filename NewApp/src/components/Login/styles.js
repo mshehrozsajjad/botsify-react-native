@@ -12,6 +12,12 @@ export default {
   content: {
     flex:1,
     flexDirection:'column'
+  },errorlogin:{
+      fontSize:10,
+      color:'red',
+      justifyContent: 'center',
+alignItems: 'center',
+      alignSelf:'center'
   },
     headerBody: {
         flex: 1,
@@ -25,11 +31,12 @@ export default {
         alignItems: 'center'
     },
     YourBotText: {
-        marginLeft: 20,
-        marginTop: 15,
-        marginBottom: 15,
+        fontFamily:'Montserrat',
+       alignItems: 'center',
+        justifyContent: 'center',
+        alignSelf: "center",
         fontSize: 27,
-        fontWeight: "bold",
+       
     },
 
     CurveHeaderRadius: {
@@ -57,26 +64,26 @@ export default {
     marginRight: 32
   },
   contentForm: {
-    marginTop: 26
+    marginTop: 5
   },
   buttonLogin: {
     
-     marginTop: 50,
+     marginTop: 35,
         marginBottom: 7,
         marginLeft: 5,
         marginRight: 5,
         borderRadius: 8,
         backgroundColor: '#FFFFFF',
-        elevation: 6,
+        elevation: 4,
   },buttonLoginFB: {
     
-     marginTop: 25,
+     marginTop: 20,
         marginBottom: 15,
         marginLeft: 5,
         marginRight: 5,
         borderRadius: 8,
         backgroundColor: '#FFFFFF',
-        elevation: 6,
+        elevation: 4,
   },
   textLogin: {
     fontSize: 19

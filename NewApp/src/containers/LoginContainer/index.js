@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
-import { Image, Alert } from "react-native";
+import { Image, Alert,AsyncStorage,NetInfo,Text,View  } from "react-native";
 import { Item, Input, Toast, Form } from "native-base";
 import { Field, reduxForm } from "redux-form";
 import { connect } from "react-redux";
@@ -11,15 +11,94 @@ import styles from  "./styles";
 
 const lockIcon = require("../../../assets/icon/lock.png");
 const mailIcon = require("../../../assets/icon/mail.png");
-
+import firebase from 'firebase';
 class LoginForm extends Component {
   constructor(props) {
     super(props);
     this.state = {
       counter: 0,
+        isLoggedin:false,
+        client_id:null,
+        client_secret:null, 
+        isLoading:false,
+        errorfield:false,
+        emailerror:false,
+        errortext:'',
+        passworderror:false,
+        isConnected:true,
+         connection_Status : "",
+        set:false
     };
   }
-
+     fiveSecTimer(){
+        setTimeout(function () {
+            console.log('updated')
+            NetInfo.isConnected.removeEventListener(
+        'connectionChange',
+        this._handleConnectivityChange
+ 
+    );
+            this.fiveSecTimer();
+        }.bind(this), 20)
+    }
+   componentDidMount(){
+         NetInfo.isConnected.fetch().done((isConnected) => {
+ 
+      if(isConnected == true)
+      {
+        AsyncStorage.getItem('auth_data').then((value) => {
+             if(value != null){
+                 this.props.navigation.navigate("Home");
+             }
+          
+       });  
+      }else{
+              AsyncStorage.removeItem('auth_data');
+        AsyncStorage.removeItem('acess_token');
+      }
+         });
+       
+       this.fiveSecTimer();
+   NetInfo.isConnected.addEventListener(
+        'connectionChange',
+        this._handleConnectivityChange
+ 
+    );
+   
+    NetInfo.isConnected.fetch().done((isConnected) => {
+ 
+      if(isConnected == true)
+      {
+        this.setState({connection_Status : "Online"})
+      }
+      else
+      {
+        this.setState({connection_Status : "Offline"})
+      }
+ 
+    });
+    }
+    componentWillUnmount() {
+ 
+    NetInfo.isConnected.removeEventListener(
+        'connectionChange',
+        this._handleConnectivityChange
+ 
+    );
+               
+ 
+  }
+_handleConnectivityChange = (isConnected) => {
+ 
+    if(isConnected == true)
+      {
+        this.setState({connection_Status : "Online"})
+      }
+      else
+      {
+        this.setState({connection_Status : "Offline"})
+      }
+  };  
   componentWillReceiveProps(nextProps, nextState){
     if (this.props.auth.isFailed !== nextProps.auth.isFailed){
       if (nextProps.auth.isFailed && !nextProps.auth.isAuthenticating){
@@ -53,11 +132,119 @@ class LoginForm extends Component {
       </Item>
     );
   }
-  authGet(response){
+  getToken(response){
       let collection={}
-        collection.username=response.status,
+        collection.username=this.props.loginForm.values.email,
+        collection.grant_type='password',
+        collection.client_secret=response.client_secret,
+        collection.client_id=response.client_id,
+        collection.scope='',
         collection.password=this.props.loginForm.values.password
-      var url = 'https://dev.botsify.com/oauth/token'
+      var url = 'https://botsify.com/oauth/token'
+       fetch(url, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(collection),
+    })
+    .then(response => response.json())
+           .then(response => { 
+           
+           this.setState({
+               access_token:response.access_token
+           })
+           let authdata = {};
+          authdata.username = this.props.loginForm.values.email
+          authdata.password = this.props.loginForm.values.password
+          authdata.client_id = response.client_id
+          authdata.client_secret = response.client_secret
+          AsyncStorage.setItem('auth_data', JSON.stringify(authdata));
+            AsyncStorage.setItem('acess_token', JSON.stringify(response.access_token));
+           this.props.navigation.navigate("Home");
+           
+       })
+        .catch(error => console.error('Error:', error));
+  }
+  authGet(response){
+    
+      if(response.status){
+          this.getToken(response);
+          
+      
+           this.setState({
+              emailerror:false,
+              passworderror:false,
+          })
+          
+      }else if(Object.keys(response).length == 1){
+          if(response.email){
+          this.setState({
+              emailerror:true,
+              isLoggedin:false,
+              isLoading:false,
+              passworderror:false,
+              errortext :'You Email is invalid!',
+              errorfield :true,
+          })
+          }else if(response.password){
+          this.setState({
+              emailerror:false,
+              isLoggedin:false,
+              isLoading:false,
+              passworderror:true,
+                
+                errortext : 'You Password is invalid!',
+                errorfield :true,
+          })
+      }
+    }
+  }
+  login() {
+       NetInfo.isConnected.fetch().done((isConnected) => {
+ 
+      if(isConnected == true)
+      {
+       
+      this.setState({
+          isLoading:true
+      })
+      if(this.props.loginForm.values === undefined){
+          this.setState({
+              emailerror:true,
+              isLoggedin:false,
+              isLoading:false,
+              passworderror:false,
+              errortext :'You Email & password is invalid!',
+              errorfield :true,
+          })
+
+      }else{
+          if(this.props.loginForm.values.email === undefined){
+              this.setState({
+              emailerror:true,
+              isLoggedin:false,
+              isLoading:false,
+              passworderror:false,
+              errortext :'You Email is invalid!',
+              errorfield :true,
+          })
+              
+          }else if(this.props.loginForm.values.password === undefined){
+              this.setState({
+              emailerror:true,
+              isLoggedin:false,
+              isLoading:false,
+              passworderror:false,
+              errortext :'You password is invalid!',
+              errorfield :true,
+          })
+              
+          }else{
+          let collection={}
+        collection.email=this.props.loginForm.values.email,
+        collection.password=this.props.loginForm.values.password
+      var url = 'https://botsify.com/api/v1/login'
        fetch(url, {
         method: 'POST', // *GET, POST, PUT, DELETE, etc.
         headers: {
@@ -68,47 +255,37 @@ class LoginForm extends Component {
     })
     .then(response => response.json())
            .then(response => { 
-           console.log('response')
-           console.log(response)
-               this.props.navigation.navigate("BotDetail")
-               
-           console.log('response')
+//           console.log(response)
+          this.authGet(response)
        })
         .catch(error => console.error('Error:', error));
-  }
-  login() {
-      this.props.navigation.navigate("Home")
-//      console.log(this.props.loginForm.values)
-//      let collection={}
-//        collection.email=this.props.loginForm.values.email,
-//        collection.password=this.props.loginForm.values.password
-//      var url = 'https://dev.botsify.com/api/v1/login'
-//       fetch(url, {
-//        method: 'POST', // *GET, POST, PUT, DELETE, etc.
-//        headers: {
-//            'Content-Type': 'application/json',
-//            // 'Content-Type': 'application/x-www-form-urlencoded',
-//        },
-//        body: JSON.stringify(collection), // body data type must match "Content-Type" header
-//    })
-//    .then(response => response.json())
-//           .then(response => { 
-//          this.authGet(response)
-//       })
-//        .catch(error => console.error('Error:', error));
-//    }
-//  onPressSwitch(){
-//    let { counter } = this.state;
-//    this.setState({
-//      counter: counter + 1
-//    }, () => {
-//      if (this.state.counter === 8){
-//        this.props.navigation.navigate("SwitchEnv");
-//      }
-//    });
+      }
+      }
+      }else{
+          alert('No internet Connection!')
+      }
+      
+  });
+}
+          
+      
+    
+  onPressSwitch(){
+    let { counter } = this.state;
+    this.setState({
+      counter: counter + 1
+    }, () => {
+      if (this.state.counter === 8){
+        this.props.navigation.navigate("SwitchEnv");
+      }
+    });
   }
 
   render() {
+      
+        const errortext = this.state.errortext
+        const errorfield = this.state.errorfield
+        const loadingstate = this.state.isLoading
     const form = (
       <Form>
         <Field
@@ -117,7 +294,7 @@ class LoginForm extends Component {
           component={this.renderInput}
           validate={[emailFormat, required]}
         />
-        <Field
+         <Field
           name="password"
         style={styles.shadow}
           component={this.renderInput}
@@ -126,11 +303,15 @@ class LoginForm extends Component {
       </Form>
     );
     return (
+     
       <Login
         onPressSwitch={() => this.onPressSwitch()}
         navigation={this.props.navigation}
         loading={this.props.auth.isAuthenticating}
         loginForm={form}
+        loadingState = {loadingstate}
+        errorfield = {errorfield}
+        errortext = {errortext}
         onLogin={() => this.login()}
       />
     );
