@@ -1,16 +1,3 @@
-buildscript {
-    repositories {
-        maven { url 'https://plugins.gradle.org/m2/'}
-    }
-    dependencies {
-        classpath 'gradle.plugin.com.onesignal:onesignal-gradle-plugin:[0.11.0, 0.99.99]'
-    }
-}
-apply plugin: 'com.onesignal.androidsdk.onesignal-gradle-plugin'
-
-repositories {
-    maven { url 'https://maven.google.com' }
-}
 apply plugin: "com.android.application"
 
 import com.android.build.OutputFile
@@ -108,18 +95,18 @@ def enableProguardInReleaseBuilds = false
 
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
-    buildToolsVersion rootProject.ext.buildToolsVersion
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
 
     defaultConfig {
         applicationId "com.botsify.app"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 1
-        versionName "1.0"
-        ndk {
-            abiFilters "armeabi-v7a", "x86"
-        }
-         manifestPlaceholders = [
+        versionCode 2
+        versionName "1.1"
+        manifestPlaceholders = [
           onesignal_app_id: '75f47b72-4da1-4a7e-a645-18d29743a6aa',
           // Project number pulled from dashboard, local value is ignored.
           onesignal_google_project_number: '484614310874'
@@ -140,13 +127,11 @@ android {
             reset()
             enable enableSeparateBuildPerCPUArchitecture
             universalApk false  // If true, also generate a universal APK
-            include "armeabi-v7a", "x86"
+            include "armeabi-v7a", "x86", "arm64-v8a", "x86_64"
         }
     }
     buildTypes {
         release {
-            minifyEnabled enableProguardInReleaseBuilds
-            proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
             signingConfig signingConfigs.release
         }
     }
@@ -155,7 +140,7 @@ android {
         variant.outputs.each { output ->
             // For each separate APK per architecture, set a unique version code as described here:
             // http://tools.android.com/tech-docs/new-build-system/user-guide/apk-splits
-            def versionCodes = ["armeabi-v7a":1, "x86":2]
+            def versionCodes = ["armeabi-v7a":1, "x86":2, "arm64-v8a": 3, "x86_64": 4]
             def abi = output.getFilter(OutputFile.ABI)
             if (abi != null) {  // null for the universal-debug, universal-release variants
                 output.versionCodeOverride =

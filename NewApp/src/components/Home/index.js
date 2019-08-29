@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import {  Header, Left, Container, Button, Body, Title, Right, Icon, Text, Content } from "native-base";
-import { View,StatusBar,BackHandler ,TouchableOpacity,Image,ScrollView,AsyncStorage,FlatList ,TouchableHighlight} from "react-native";
+import { View,StatusBar ,TouchableOpacity,Image,ScrollView,AsyncStorage,FlatList ,TouchableHighlight} from "react-native";
 import styles from "./styles";
 const Avatar = require('../../../assets/support.png');
 const headerlogo = require('../../../assets/headerlogo.png');
